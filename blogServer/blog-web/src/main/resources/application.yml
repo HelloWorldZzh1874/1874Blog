@@ -1,0 +1,154 @@
+# 项目相关配置
+blog:
+  # 名称
+  name: 1874blog
+  # 版本
+  version: 0.1
+  # 版权年份
+  copyrightYear: 2022
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8088
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # 连接数满后的排队数，默认为100
+    accept-count: 1000
+    threads:
+      # tomcat最大线程数，默认为200
+      max: 800
+      # Tomcat启动初始化的线程数，默认值10
+      min-spare: 100
+
+
+mybatis-plus:
+  # 实体扫描
+  type-aliases-package: com.zzh.**.entity
+  # mapper路径
+  mapper-locations: classpath:mappers/*Mapper.xml
+  configuration:
+    # 打印sql
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    # 驼峰命名映射
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      # 表明驼峰命名
+      table-underline: true
+      # 逻辑删除默认值
+      logic-delete-value: 0
+      # 逻辑不删除默认值
+      logic-not-delete-value: 1
+
+#分页设置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: false
+  params: count=countSql
+
+# 日志配置
+logging:
+  level:
+    com:
+      zzh:
+        mapper: debug
+
+# Spring配置
+spring:
+  elasticsearch:
+    rest:
+      uris: 127.0.0.1:9200
+      # username:
+      # password:
+      connection-timeout: 10S
+      read-timeout: 30S
+      sniffer:
+        interval: 5m
+        delay-after-failure: 1m
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 50MB
+      # 设置总上传的文件大小
+      max-request-size: 100MB
+      enabled: true
+      file-size-threshold: 0
+  mail:
+    host: smtp.163.com
+    username: helloworld20001@163.com
+    from: helloworld20001@163.com
+    password: VKTPGPIPRZGKQHXD
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+          required: true
+      auth: true
+      class: javax.net.ssl.SSLSocketFactory
+    default-encoding: UTF-8
+    # thymeleaf配置
+  thymeleaf:
+    check-template: true
+    prefix: classpath:/template/
+    suffix: .html
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    mode: HTML
+  freemarker:
+    settings:
+      number_format: 0
+  # 服务模块
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: true
+  # 包含多个配置文件
+  profiles:
+    active: druid
+    # redis 配置
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    password: ybzzh20000129
+  jackson:
+    # 解决取出数据库时间有时差
+    time-zone: GMT+8
+
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: true
+
+#token相关
+token:
+  #令牌标识
+  header: token
+  # 令牌签名
+  secret: zzh1874
+  # 令牌默认过期时间(分钟)--1天
+  expireTime: 1440
+  # 记住我后过期时间--7天
+  rememberMe: 10080
+  # 令牌刷新时间(分钟)--1小时
+  refreshTime: 60
+
+# 存储捅相关
+cos:
+  secret_id: AKIDc7OSIuTzJSN2X8eEfv0sV7hCe3Qo6HG8
+  secret_key: vphWM9wjS6fCdx894oJZZULE90thQBoG
+  bucket_name: 1874centos-1304996288
+# es搜索
+elasticsearch:
+  host: 127.0.0.1
+  port: 9200

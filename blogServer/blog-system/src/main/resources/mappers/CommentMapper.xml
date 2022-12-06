@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzh.mapper.CommentMapper">
+
+    <select id="listCommentBackDTO" resultType="com.zzh.dto.CommentBackDTO">
+        SELECT
+        c.id,
+        tuiu.avatar,
+        tuiu.nickname,
+        tuir.nickname AS reply_nickname,
+        a.article_title,
+        c.comment_content,
+        c.create_time,
+        c.is_read
+        FROM
+        tb_comment c
+        LEFT JOIN tb_article a ON c.article_id = a.id
+        LEFT JOIN tb_user u ON c.user_id = u.id
+        LEFT JOIN tb_user r ON c.reply_id = r.id
+        LEFT JOIN tb_user_info tuiu on tuiu.id = u.info_id
+        LEFT JOIN tb_user_info tuir on tuir.id = r.info_id
+        <where>
+            <if test="condition.keywords != null">
+                and tuiu.nickname like concat('%',#{condition.keywords},'%')
+            </if>
+        </where>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <select id="listComments" resultType="com.zzh.dto.CommentDTO">
+        SELECT
+        u.nickname,
+        u.avatar,
+        u.web_site,
+        c.user_id,
+        c.id,
+        c.comment_content,
+        c.create_time
+        FROM
+        tb_comment c
+        JOIN tb_user tu ON c.user_id = tu.id
+        JOIN tb_user_info u on u.id = tu.info_id
+        WHERE
+        <if test="articleId != null">
+            article_id = #{articleId}
+        </if>
+        <if test="articleId == null">
+            article_id is NULL
+        </if>
+        AND parent_id IS NULL
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <select id="listReplies" resultType="com.zzh.dto.ReplyDTO">
+        SELECT
+        *
+        FROM
+        (
+        SELECT
+        c.user_id,
+        tui.nickname,
+        tui.avatar,
+        tui.web_site,
+        c.reply_id,
+        rui.nickname AS reply_nickname,
+        rui.web_site AS reply_web_site,
+        c.id,
+        c.parent_id,
+        c.comment_content,
+        c.create_time,
+        row_number () over ( PARTITION BY parent_id ORDER BY c.create_time ASC ) row_num
+        FROM
+        tb_comment c
+        JOIN tb_user ui on ui.id = c.user_id
+        JOIN tb_user_info tui ON tui.id = ui.info_id
+        JOIN tb_user ur ON c.reply_id = ur.id
+        JOIN tb_user_info rui on rui.id = ur.info_id
+        WHERE
+        parent_id IN
+        (
+        <foreach collection="commentIdList" item="commentId" separator=",">
+            #{commentId}
+        </foreach>
+        )
+        ) t
+        WHERE
+        4 > row_num
+    </select>
+
+    <select id="listReplyCountByCommentId" resultType="com.zzh.dto.ReplyCountDTO">
+        SELECT
+        parent_id as comment_id,
+        count(1) AS reply_count
+        FROM
+        tb_comment
+        WHERE
+        parent_id IN
+        (
+        <foreach collection="commentIdList" item="commentId" separator=",">
+            #{commentId}
+        </foreach>
+        )
+        GROUP BY
+        parent_id
+    </select>
+
+    <select id="listRepliesByCommentId" resultType="com.zzh.dto.ReplyDTO">
+        SELECT c.user_id,
+               tui.nickname,
+               tui.avatar,
+               tui.web_site,
+               c.reply_id,
+               rui.nickname as reply_nickname,
+               rui.web_site as reply_web_site,
+               c.id,
+               c.parent_id,
+               c.comment_content,
+               c.create_time
+        FROM tb_comment c
+                 JOIN tb_user tu on tu.id = c.user_id
+                 JOIN tb_user_info tui ON tui.id = tu.info_id
+                 JOIN tb_user ru on ru.id = c.user_id
+                 JOIN tb_user_info rui ON rui.id = ru.info_id
+        WHERE  parent_id = #{commentId}
+        ORDER BY create_time ASC
+        LIMIT #{current},5
+    </select>
+
+    <select id="getUserComment" resultMap="getUserCommentList">
+        select c.id,ta.id as article_id,ta.article_title,tui.nickname,c.comment_content,c.create_time,is_read
+        from tb_comment c
+                 JOIN tb_user tu on tu.id = c.user_id
+                 JOIN tb_user_info tui on tui.id = tu.info_id
+                 JOIN tb_article ta on ta.id = c.article_id
+        WHERE (ta.user_id = #{userId} and reply_id is NULL) or reply_id = #{userId}
+    </select>
+    <select id="getNotReadCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_comment c
+                 JOIN tb_user tu on tu.id = c.user_id
+                 JOIN tb_user_info tui on tui.id = tu.info_id
+                 JOIN tb_article ta on ta.id = c.article_id
+        WHERE is_read =0 and ((ta.user_id = #{userId} and reply_id is NULL) or reply_id = #{userId})
+    </select>
+
+    <resultMap id="getUserCommentList" type="com.zzh.dto.CommentUserDTO">
+        <id property="commentId" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="articleTitle" column="article_title"/>
+        <result property="content" column="comment_content"/>
+        <result property="createTime" column="create_time"/>
+        <result property="nickName" column="nickname"/>
+        <result property="isRead" column="is_read"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzh.mapper.MusicListMapper">
+
+    <select id="getHostListMusic" resultMap="MusicList">
+        SELECT a.id,music_name,singer_name,music_Img,music_al
+        FROM tb_music a
+        LEFT JOIN tb_singer ts on a.singer_id = ts.id
+        LEFT JOIN tb_music_list tml on a.id = tml.music_id
+        where list_id = 1
+    </select>
+    <select id="getCollectMusic" resultMap="MusicList">
+        SELECT a.id,music_name,singer_name,music_Img,music_al
+        FROM tb_music a
+                 LEFT JOIN tb_singer ts on a.singer_id = ts.id
+                 LEFT JOIN tb_music_list tml on a.id = tml.music_id
+        where list_id = -1 and tml.user_id = #{userId}
+    </select>
+    <resultMap id="MusicList" type="com.zzh.dto.MusicListDTO">
+        <id column="id" property="id"/>
+        <result column="music_name" property="name"/>
+        <result column="singer_name" property="singer"/>
+        <result column="music_Img" property="picUrl"/>
+        <result column="music_al" property="al"/>
+    </resultMap>
+</mapper>

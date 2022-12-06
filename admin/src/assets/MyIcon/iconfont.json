@@ -1,0 +1,23 @@
+{
+  "id": "2752489",
+  "name": "我的图标",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "21712628",
+      "name": "music",
+      "font_class": "music",
+      "unicode": "e6aa",
+      "unicode_decimal": 59050
+    },
+    {
+      "icon_id": "8106226",
+      "name": "musiclist",
+      "font_class": "musiclist",
+      "unicode": "e69c",
+      "unicode_decimal": 59036
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mailTemp</title>
+</head>
+<body>
+<span style="font-size: 32px" th:text="${context}"></span>
+<p></p>
+<a th:if="${not #strings.isEmpty(webUrl)}" th:href="${webUrl}">点击此处修改密码</a>
+</body>
+</html>

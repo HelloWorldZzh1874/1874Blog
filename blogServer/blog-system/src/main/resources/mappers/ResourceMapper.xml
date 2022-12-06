@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzh.mapper.ResourceMapper">
+
+
+    <select id="listRoleUrls" resultMap="ResourceList">
+        select tres.id,tr.role_name,tres.resource_name,tres.url,tres.request_method,tres.is_anonymous
+        from tb_role tr
+                 left join con_role_resource crr on tr.id = crr.role_id
+                 left join tb_resource tres on crr.resource_id = tres.id
+        WHERE tres.parent_id is not NULL  AND  tres.is_anonymous = 0 AND tres.is_disable = 0
+    </select>
+    <resultMap id="ResourceList" type="com.zzh.dto.RoleUrlDTO">
+        <id column="id" property="resId"/>
+        <result column="resource_name" property="resName"/>
+        <result column="url" property="url"/>
+        <result column="request_method" property="requestMethod"/>
+        <result column="is_anonymous" property="isAnonymous"/>
+        <collection property="roleList" ofType="java.lang.String">
+            <constructor>
+                <arg column="role_name"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="getChildrenId" resultType="java.lang.Integer">
+        SELECT id
+        FROM tb_resource
+        WHERE parent_id = #{id}
+    </select>
+</mapper>
