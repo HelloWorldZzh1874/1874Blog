@@ -145,8 +145,8 @@ token:
 
 # 存储捅相关
 cos:
-  secret_id: AKIDc7OSIuTzJSN2X8eEfv0sV7hCe3Qo6HG8
-  secret_key: vphWM9wjS6fCdx894oJZZULE90thQBoG
+  secret_id: ***********
+  secret_key: ***********
   bucket_name: 1874centos-1304996288
 # es搜索
 elasticsearch:
