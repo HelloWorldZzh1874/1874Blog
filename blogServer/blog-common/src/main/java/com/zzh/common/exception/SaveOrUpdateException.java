@@ -15,4 +15,8 @@ public class SaveOrUpdateException extends CommonWriteException {
     public SaveOrUpdateException(String message) {
         super(message);
     }
+
+    public SaveOrUpdateException(String errorCode,String message) {
+        super(errorCode,message);
+    }
 }

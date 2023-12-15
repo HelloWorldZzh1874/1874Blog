@@ -10,7 +10,7 @@ module.exports = {
     port: 80,
     proxy: {
       "/websocket": {
-        target: "http:/81.68.122.101/",
+        target: "http:/127.0.0.1/",
         changeOrigin: true,
         pathRewrite: {
           "^/": ""

@@ -1,5 +1,6 @@
 package com.zzh.security.filter;
 
+import com.zzh.entity.User;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.common.utils.StringUtils;
 import com.zzh.entity.LoginUser;
@@ -28,7 +29,7 @@ import java.util.Objects;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
 
     /**
      * token标识
@@ -43,9 +44,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader(this.header);
         // 从token中获取user对象
         LoginUser loginUser;
-
+        // 测试环境用
+        if (StringUtils.isNotEmpty(token) && "root".equals(token)) {
+            LoginUser testUser = LoginUser.builder().role("ROLE_ROOT")
+                    .user(User.builder().id(1L).username("test").password("123").enabled(true).notLock(true).build()).build();
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
         // 如果token不为空 对象并且上下文没有值,并且此token能解析到用户
-        if (StringUtils.isNotEmpty(token)
+        else if (StringUtils.isNotEmpty(token)
                 && Objects.isNull(SecurityUtils.getAuthentication())
                 && !Objects.isNull(loginUser = tokenService.parseLoginUser(token))
         ) {
@@ -56,6 +64,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
+
+
+
+
         // 放行请求
         filterChain.doFilter(request, response);
     }

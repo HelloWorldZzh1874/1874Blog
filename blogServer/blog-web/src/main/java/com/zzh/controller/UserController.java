@@ -36,7 +36,7 @@ import static com.zzh.aop.OptTypeConst.*;
 public class UserController extends BaseController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     /**
      * @param condition 条件

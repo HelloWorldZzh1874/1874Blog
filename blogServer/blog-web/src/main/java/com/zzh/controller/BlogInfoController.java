@@ -22,7 +22,7 @@ import static com.zzh.aop.OptTypeConst.UPDATE;
 public class BlogInfoController {
 
     @Autowired
-    BlogService blogService;
+    private BlogService blogService;
 
     /**
      * @description 查看关于我信息

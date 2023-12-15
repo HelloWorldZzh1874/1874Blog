@@ -3,9 +3,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/1874blog?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
-    username: mysqlzzh
-    password: ybzzh20000129
+    url: jdbc:mysql://192.168.159.129:3306/1874blog?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 200129
     druid:
       # 初始连接数
       initialSize: 5

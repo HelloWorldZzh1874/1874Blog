@@ -71,7 +71,7 @@
                 class="upload-cover"
                 drag
                 :before-upload="beforeAvatorUplode"
-                action="http://81.68.122.101/article/uploadCover"
+                action="http://127.0.0.1/article/uploadCover"
                 multiple
                 :on-remove="deleteCover"
                 :on-success="uploadCover"

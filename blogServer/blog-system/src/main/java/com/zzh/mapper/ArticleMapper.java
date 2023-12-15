@@ -1,8 +1,11 @@
 package com.zzh.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zzh.dto.*;
 import com.zzh.entity.Article;
 import com.zzh.vo.ConditionVO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

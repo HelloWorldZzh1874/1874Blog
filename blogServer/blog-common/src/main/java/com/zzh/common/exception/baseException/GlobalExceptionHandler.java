@@ -4,7 +4,6 @@ import com.zzh.common.base.Result;
 import com.zzh.common.constant.HttpStatus;
 import com.zzh.common.exception.EmailUncorrectedException;
 import com.zzh.common.exception.RefuseAnonymousUserException;
-import com.zzh.common.exception.SignedAccountException;
 import com.zzh.common.exception.WebSocketException;
 import com.zzh.common.utils.JsonUtil;
 import org.slf4j.Logger;
@@ -57,19 +56,6 @@ public class GlobalExceptionHandler extends JsonUtil {
         this.writeJson(resp,Result.error(e.getErrorCode(),e.getErrorMsg()));
     }
 
-    /**
-     * 相同账号重复登陆异常
-     * @param req 请求
-     * @param resp 相应
-     * @param e 异常信息
-     * @throws IOException 写入页面的IO异常
-     */
-    @ExceptionHandler(value = SignedAccountException.class)
-    @ResponseBody
-    public void signedExceptionHandler(HttpServletRequest req, HttpServletResponse resp, MyException e) throws IOException {
-        logger.error(e.getMessage());
-        this.writeJson(resp,Result.error(e.getErrorCode(),e.getErrorMsg()));
-    }
 
     /**
      * @description 邮箱相关异常错误

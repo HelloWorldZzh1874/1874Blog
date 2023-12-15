@@ -15,6 +15,7 @@ import com.zzh.entity.*;
 import com.zzh.mapper.*;
 import com.zzh.service.ArticleService;
 import com.zzh.service.ConArticleTagService;
+import com.zzh.service.ElasticService;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.vo.ArticleVO;
 import com.zzh.vo.ConditionVO;
@@ -35,6 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.zzh.common.constant.CommonConst.FALSE;
+import static com.zzh.common.constant.CommonConst.TRUE;
 import static com.zzh.common.constant.RedisConstant.*;
 
 /**
@@ -49,34 +51,34 @@ import static com.zzh.common.constant.RedisConstant.*;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
 
     @Autowired
-    ArticleMapper articleMapper;
+    private ArticleMapper articleMapper;
 
     @Autowired
-    ConArticleTagMapper conArticleTagMapper;
+    private ConArticleTagMapper conArticleTagMapper;
 
     @Autowired
-    ConArticleTagService conArticleTagService;
+    private ConArticleTagService conArticleTagService;
 
     @Autowired
-    ElasticsearchRestTemplate elasticsearchRestTemplate;
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @Autowired
-    TagMapper tagMapper;
+    private TagMapper tagMapper;
 
     @Autowired
-    CategoryMapper categoryMapper;
+    private CategoryMapper categoryMapper;
 
     @Autowired
-    RedisUtils redisUtils;
+    private RedisUtils redisUtils;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
-    AsyncManager asyncManager;
+    private AsyncManager asyncManager;
 
     @Autowired
-    EsArticleMapper esArticleMapper;
+    private EsArticleServiceImpl esArticleService;
 
     @Override
     public PageInfo<ArticleBackDTO> getArticleBackPageList(ConditionVO conditionVO) {
@@ -130,15 +132,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                     .collect(Collectors.toList());
             conArticleTagService.saveBatch(articleTagList);
         }
-        // 将文章添加到搜索库
-        EsArticle esArticle = EsArticle.builder()
-                .id(article.getId())
-                .articleContent(articleVO.getArticleContent())
-                .articleTitle(articleVO.getArticleTitle())
-                .isDraft(articleVO.getIsDraft())
-                .build();
-        // 存储信息
-        esArticleMapper.save(esArticle);
+        if (!article.getIsDraft().equals(TRUE)) {
+            // 将文章添加到搜索库
+            EsArticle esArticle = EsArticle.builder()
+                    .id(article.getId())
+                    .articleContent(articleVO.getArticleContent())
+                    .articleTitle(articleVO.getArticleTitle())
+                    .isDraft(articleVO.getIsDraft())
+                    .build();
+            // 存储信息
+            esArticleService.saveEntity(esArticle);
+        }
     }
 
     @Override
@@ -206,7 +210,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleMapper.deleteBatchIds(articleIdList);
         // 删除搜索库文章
         for (Long i : articleIdList) {
-            esArticleMapper.deleteById(i);
+            esArticleService.deleteById(i);
         }
     }
 
@@ -235,7 +239,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ArticleDTO getArticleById(Integer articleId, HttpServletRequest request) {
         // 更新浏览量
-        asyncManager.updateArticleViewsCount(articleId,request);
+        asyncManager.updateArticleViewsCount(articleId, request);
         // 查询id对应的文章
         ArticleDTO article = articleMapper.getArticleById(articleId);
         // 查询上一篇下一篇文章
@@ -358,6 +362,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         nativeSearchQueryBuilder.withQuery(boolQueryBuilder);
         return nativeSearchQueryBuilder;
     }
+
     /**
      * 文章搜索结果
      *

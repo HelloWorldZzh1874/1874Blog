@@ -201,7 +201,7 @@ export default {
     connect() {
       let that = this;
       console.log("建立连接");
-      this.websocket = new WebSocket("ws://81.68.122.101:8088/websocket");
+      this.websocket = new WebSocket("ws://127.0.0.1:8088/websocket");
       // 连接发生错误的回调方法
       this.websocket.onerror = function(event) {
         console.log(event);

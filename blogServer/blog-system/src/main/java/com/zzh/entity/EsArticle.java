@@ -1,9 +1,7 @@
 package com.zzh.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.zzh.common.base.EsEntity;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -15,12 +13,13 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  * @description TODO
  * @date 2022/4/2315:00
  */
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 @Document(indexName = "article_index")
-public class EsArticle {
+public class EsArticle extends EsEntity {
 
     @Id
     private Long id;

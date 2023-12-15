@@ -1,12 +1,14 @@
 package com.zzh.common.exception.baseException;
 
 import com.zzh.common.base.BaseErrorInfoInterface;
+import lombok.Getter;
 
 /**
  * @author zzh
  * @description 自定义异常
  * @date 2022/1/2719:24
  */
+@Getter
 public class MyException extends RuntimeException{
     private static final long serialVersionUID = 1L;
 
@@ -53,16 +55,8 @@ public class MyException extends RuntimeException{
     }
 
 
-    public String getErrorCode() {
-        return errorCode;
-    }
-
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
-    }
-
-    public String getErrorMsg() {
-        return errorMsg;
     }
 
     public void setErrorMsg(String errorMsg) {

@@ -38,19 +38,19 @@ import static com.zzh.common.constant.RedisConstant.LOGIN_FAILURE_PRE;
 public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Autowired
-    OnlineUserMap onlineUserMap;
+    private OnlineUserMap onlineUserMap;
 
     @Autowired
-    AsyncManager asyncManager;
+    private AsyncManager asyncManager;
 
     @Autowired
-    RedisUtils redisUtil;
+    private RedisUtils redisUtil;
 
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     /**
      * 只允许post请求

@@ -64,9 +64,9 @@ logging:
 spring:
   elasticsearch:
     rest:
-      uris: 127.0.0.1:9200
-      # username:
-      # password:
+      uris: 192.168.159.129:9200
+      username: elastic
+      password: 200129
       connection-timeout: 10S
       read-timeout: 30S
       sniffer:
@@ -119,8 +119,8 @@ spring:
     # redis 配置
   redis:
     port: 6379
-    host: 127.0.0.1
-    password: ybzzh20000129
+    host: 192.168.159.129
+    password: 200129
   jackson:
     # 解决取出数据库时间有时差
     time-zone: GMT+8
@@ -145,10 +145,10 @@ token:
 
 # 存储捅相关
 cos:
-  secret_id: ***********
-  secret_key: ***********
+  secret_id: AKIDurrosU1SjhoslXUVXcm4MZi6LapDXn6S
+  secret_key: aq5EeM0WsMht7WyRn0yoQs9lMvJYdaQG
   bucket_name: 1874centos-1304996288
 # es搜索
 elasticsearch:
-  host: 127.0.0.1
+  host: 192.168.159.129
   port: 9200

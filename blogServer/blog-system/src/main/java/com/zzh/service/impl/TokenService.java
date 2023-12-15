@@ -144,7 +144,6 @@ public class TokenService {
      */
     private void refreshToken(LoginUser user) {
         String key = getTokenKey(user.getToken());
-        System.out.println("已刷新token");
         // 重新存储入redis
         redisUtils.set(key, user, expireTime, MINUTES);
     }

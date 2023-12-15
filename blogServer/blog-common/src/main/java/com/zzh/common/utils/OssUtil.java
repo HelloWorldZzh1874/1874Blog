@@ -13,11 +13,15 @@ import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.region.Region;
 import com.zzh.common.base.BaseErrorInfo;
 import com.zzh.common.base.FilePathEnum;
+import com.zzh.common.constant.HttpStatus;
+import com.zzh.common.exception.SaveOrUpdateException;
 import com.zzh.common.exception.baseException.CommonWriteException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +64,9 @@ public class OssUtil {
      * @return 返回服务器的图片url
      */
     public static String upload(MultipartFile file, String targetAddr) {
+        if(Objects.isNull(file) || file.isEmpty()){
+            throw  new SaveOrUpdateException(HttpStatus.BAD_REQUEST,"文件内容为空！");
+        }
         // 获取不重复的随机名
         String fileName = String.valueOf(UUID.randomUUID());
         // 获取文件的扩展名如png,jpg等

@@ -27,7 +27,7 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes) throws AccessDeniedException, InsufficientAuthenticationException {
         // 如果该对象不存在权限，那么认定为匿名接口，可以访问
-        if (null == configAttributes || configAttributes.size() <= 0) {
+        if (null == configAttributes || configAttributes.isEmpty()) {
             return;
         }
         // 不是匿名用户则进行鉴权

@@ -38,21 +38,21 @@ import static com.zzh.common.constant.RedisConstant.COMMENT_USER_LIKE;
 @Component
 public class MyAuthenticationSuccessHandler extends JsonUtil implements AuthenticationSuccessHandler {
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    UserInfoService userInfoService;
+    private UserInfoService userInfoService;
 
     @Autowired
-    OnlineUserMap onlineUserMap;
+    private OnlineUserMap onlineUserMap;
 
     @Autowired
-    RedisUtils redisUtils;
+    private RedisUtils redisUtils;
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

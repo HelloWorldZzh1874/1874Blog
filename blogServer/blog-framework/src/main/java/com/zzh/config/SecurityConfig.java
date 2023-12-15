@@ -42,13 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * 实现UserDetailsService
      */
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     /**
      * 密码编码器
      */
     @Autowired
-    MyPasswordEncoder passwordEncoder;
+    private MyPasswordEncoder passwordEncoder;
 
     /**
      * 未授权异常

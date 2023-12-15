@@ -5,6 +5,7 @@ import com.zzh.aop.OptLog;
 import com.zzh.common.base.BaseController;
 import com.zzh.common.base.FilePathEnum;
 import com.zzh.common.base.Result;
+import com.zzh.common.constant.HttpStatus;
 import com.zzh.common.utils.OssUtil;
 import com.zzh.entity.Article;
 import com.zzh.service.ArticleService;
@@ -14,12 +15,14 @@ import com.zzh.vo.DeleteVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 import static com.zzh.aop.OptTypeConst.REMOVE;
 import static com.zzh.aop.OptTypeConst.UPDATE;
@@ -38,7 +41,7 @@ import static com.zzh.aop.OptTypeConst.UPDATE;
 public class ArticleController extends BaseController {
 
     @Autowired
-    ArticleService articleService;
+    private ArticleService articleService;
 
     /**
      * @param file 图片文件
@@ -46,8 +49,9 @@ public class ArticleController extends BaseController {
      * @description 上传文章封面到存储服务器
      * @date 2022/3/9
      */
-    @ApiOperation(value = "上传文章封面到OSS")
+    @ApiOperation(value = "上传文章封面到cos")
     @PostMapping("/uploadCover")
+    @Transactional(rollbackFor = Exception.class)
     public Result saveArticleCover(MultipartFile file) {
         String fullUrl = OssUtil.upload(file, FilePathEnum.ARTICLE_COVER.getPath());
         return Result.success("", fullUrl);
@@ -59,10 +63,10 @@ public class ArticleController extends BaseController {
      * @description 上传图片到oss
      * @date 2022/3/9
      */
-    @ApiOperation(value = "上传文章图片到OSS")
+    @ApiOperation(value = "上传文章图片到Cos")
     @PostMapping("/uploadImg")
     public Result saveArticleImages(MultipartFile file) {
-        String fullUrl = OssUtil.upload(file, FilePathEnum.ARTICLE_COVER.getPath());
+        String fullUrl = OssUtil.upload(file, FilePathEnum.ARTICLE.getPath());
         return Result.success("", fullUrl);
     }
 
@@ -71,13 +75,16 @@ public class ArticleController extends BaseController {
      * @description 从oss删除图片
      * @date 2022/3/10
      */
-    @ApiOperation(value = "删除OSS图片")
+    @ApiOperation(value = "删除cos图片")
     @PostMapping("/deleteImg")
     public Result deleteImg(String key) {
         try {
             OssUtil.delete(key);
             return Result.success("操作成功!");
         } catch (Exception e) {
+            if(Objects.isNull(key) || key.isEmpty()){
+                return Result.error(HttpStatus.BAD_REQUEST,"文件参数为空!");
+            }
             return Result.error("服务器异常!");
         }
     }
@@ -277,4 +284,6 @@ public class ArticleController extends BaseController {
     public Result searchArticle(ConditionVO conditionVO) {
         return Result.success(articleService.listSearchArticles(conditionVO));
     }
+
+
 }

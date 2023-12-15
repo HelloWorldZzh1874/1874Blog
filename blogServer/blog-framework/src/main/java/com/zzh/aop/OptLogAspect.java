@@ -92,11 +92,17 @@ public class OptLogAspect {
         // 返回结果
         operationLog.setResponseData(JSON.toJSONString(keys));
         // 得到登录用户
-        User user = ((LoginUser) SecurityUtils.getAuthentication().getPrincipal()).getUser();
-        // 请求用户ID
-        operationLog.setUserId(user.getId());
-        // 请求用户
-        operationLog.setUsername(user.getUsername());
+        User user = null;
+        try {
+            user = ((LoginUser) SecurityUtils.getAuthentication().getPrincipal()).getUser();
+            // 请求用户ID
+            operationLog.setUserId(user.getId());
+            // 请求用户
+            operationLog.setUsername(user.getUsername());
+        }catch (ClassCastException e){
+            operationLog.setOptDesc(e.getMessage());
+        }
+
         // 请求IP
         String ipAddr = IpUtils.getIpAddr(request);
         operationLog.setIpAddr(ipAddr);
