@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zzh.aysnc.AsyncManager;
+import com.zzh.common.exception.NoDateException;
 import com.zzh.common.exception.SaveOrUpdateException;
 import com.zzh.common.utils.BeanCopyUtil;
 import com.zzh.common.utils.OssUtil;
@@ -151,6 +152,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Article article = articleMapper.selectOne(new LambdaQueryWrapper<Article>()
                 .select(Article::getId, Article::getArticleTitle, Article::getArticleContent, Article::getArticleCover, Article::getCategoryId, Article::getIsTop, Article::getIsDraft)
                 .eq(Article::getId, articleId));
+        if(Objects.isNull(article)){
+            throw new NoDateException();
+        }
         // 查询文章标签
         List<Integer> tagIdList = conArticleTagMapper.selectList(new LambdaQueryWrapper<ConArticleTag>()
                         .select(ConArticleTag::getTagId)

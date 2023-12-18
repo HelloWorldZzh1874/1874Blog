@@ -1,5 +1,6 @@
 package com.zzh.common.exception;
 
+import com.zzh.common.constant.HttpStatus;
 import com.zzh.common.exception.baseException.CommonWriteException;
 
 /**
@@ -9,7 +10,7 @@ import com.zzh.common.exception.baseException.CommonWriteException;
  */
 public class SaveOrUpdateException extends CommonWriteException {
     public SaveOrUpdateException() {
-        super("保存失败!服务器忙，请稍后再试!");
+        super(HttpStatus.ERROR,"保存失败!服务器忙，请稍后再试!");
     }
 
     public SaveOrUpdateException(String message) {

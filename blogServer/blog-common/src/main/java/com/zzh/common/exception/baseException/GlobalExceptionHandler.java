@@ -87,4 +87,22 @@ public class GlobalExceptionHandler extends JsonUtil {
         this.writeJson(resp,Result.error(HttpStatus.UNCORRECTED,e.getErrorMsg()));
     }
 
+    /**
+     * @description WebSocket异常
+     * @date 2022/4/25
+     * @param req
+     * @param resp
+     * @param e
+     * @return void
+     */
+    @ExceptionHandler(value = MyException.class)
+    @ResponseBody
+    public void myExceptionHandler(HttpServletRequest req, HttpServletResponse resp, MyException e) throws IOException {
+        logger.error(e.getMessage());
+        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+            logger.error(stackTraceElement.toString());
+        }
+        this.writeJson(resp,Result.error(e.getErrorCode(),e.getErrorMsg()));
+    }
+
 }
