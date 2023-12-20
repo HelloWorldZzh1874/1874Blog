@@ -9,6 +9,7 @@ import com.zzh.common.constant.HttpStatus;
 import com.zzh.common.utils.OssUtil;
 import com.zzh.entity.Article;
 import com.zzh.service.ArticleService;
+import com.zzh.service.impl.EsArticleServiceImpl;
 import com.zzh.vo.ArticleVO;
 import com.zzh.vo.ConditionVO;
 import com.zzh.vo.DeleteVO;
@@ -42,6 +43,9 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private EsArticleServiceImpl esArticleService;
 
     /**
      * @param file 图片文件
@@ -82,8 +86,8 @@ public class ArticleController extends BaseController {
             OssUtil.delete(key);
             return Result.success("操作成功!");
         } catch (Exception e) {
-            if(Objects.isNull(key) || key.isEmpty()){
-                return Result.error(HttpStatus.BAD_REQUEST,"文件参数为空!");
+            if (Objects.isNull(key) || key.isEmpty()) {
+                return Result.error(HttpStatus.BAD_REQUEST, "文件参数为空!");
             }
             return Result.error("服务器异常!");
         }
@@ -148,6 +152,11 @@ public class ArticleController extends BaseController {
     @OptLog(optType = UPDATE)
     @PutMapping("/admin/top/{articleId}")
     public Result updateArticleTop(@PathVariable("articleId") Long articleId, Integer isTop) {
+        if (isTop != 0 && isTop != 1) {
+            return Result.error(HttpStatus.BAD_REQUEST, "参数错误！！");
+        } else if (articleService.getById(articleId) == null) {
+            return Result.error(HttpStatus.BAD_REQUEST, "文章id错误！");
+        }
         Article article = Article.builder()
                 .id(articleId)
                 .isTop(isTop)
@@ -164,7 +173,7 @@ public class ArticleController extends BaseController {
     @OptLog(optType = UPDATE)
     @ApiOperation(value = "文章逻辑删除或恢复")
     @PutMapping("/admin/deleteOrRecArticle")
-    public Result deleteOrRecArticle(DeleteVO deleteVo) {
+    public Result deleteOrRecArticle(@Valid DeleteVO deleteVo) {
         articleService.deleteOrRecArticle(deleteVo);
         return Result.success("操作成功!");
     }
@@ -247,6 +256,9 @@ public class ArticleController extends BaseController {
     @ApiOperation(value = "查看分类下对应的文章")
     @GetMapping("/category/{categoryId}")
     public Result listArticlesByCategoryId(@PathVariable("categoryId") Integer categoryId, Integer current) {
+        if (current <= 0) {
+            return Result.error(HttpStatus.BAD_REQUEST, "分页参数有误！");
+        }
         // 构造查询条件
         ConditionVO conditionVO = ConditionVO.builder()
                 .categoryId(categoryId)
@@ -265,6 +277,9 @@ public class ArticleController extends BaseController {
     @ApiOperation(value = "查看标签下对应的文章")
     @GetMapping("/tag/{tagId}")
     public Result listArticlesByTagId(@PathVariable("tagId") Integer tagId, Integer current) {
+        if (current <= 0) {
+            return Result.error(HttpStatus.BAD_REQUEST, "分页参数有误！");
+        }
         // 构造查询条件
         ConditionVO conditionVO = ConditionVO.builder()
                 .tagId(tagId)
@@ -282,7 +297,7 @@ public class ArticleController extends BaseController {
     @ApiOperation(value = "es关键字搜索文章")
     @GetMapping("/search")
     public Result searchArticle(ConditionVO conditionVO) {
-        return Result.success(articleService.listSearchArticles(conditionVO));
+        return Result.success(esArticleService.searchHighlights(conditionVO));
     }
 
 

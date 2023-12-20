@@ -26,13 +26,13 @@ import static com.zzh.common.constant.RedisConstant.ARTICLE_VIEWS_COUNT;
 public class AsyncManager {
 
     @Autowired
-    MailUtil mailUtil;
+    private MailUtil mailUtil;
 
     @Autowired
-    MusicService musicService;
+    private MusicService musicService;
 
     @Autowired
-    RedisUtils redisUtils;
+    private RedisUtils redisUtils;
     @Autowired
     private RedisTemplate redisTemplate;
 

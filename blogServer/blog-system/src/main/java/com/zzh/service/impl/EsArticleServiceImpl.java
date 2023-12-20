@@ -14,9 +14,13 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +74,7 @@ public class EsArticleServiceImpl implements ElasticService<EsArticle> {
         if (Objects.nonNull(conditionVO.getKeywords())) {
             boolQueryBuilder.must(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("articleTitle", conditionVO.getKeywords()))
                             .should(QueryBuilders.matchQuery("articleContent", conditionVO.getKeywords())))
-                    .must(QueryBuilders.termQuery("isDraft", FALSE));
+                    .must(QueryBuilders.termQuery("isDraft", FALSE)).must(QueryBuilders.termQuery("isLogicDel", FALSE));
         }
         // 查询
         nativeSearchQueryBuilder.withQuery(boolQueryBuilder);
@@ -136,7 +140,40 @@ public class EsArticleServiceImpl implements ElasticService<EsArticle> {
                                 id(item.getId()).
                                 articleContent(item.getArticleContent()).
                                 articleTitle(item.getArticleTitle()).
-                                isDraft(item.getIsDraft()).build())
+                                isDraft(item.getIsDraft()).
+                                isLogicDel(item.getIsDelete()).
+                                build())
                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean update(EsArticle esArticle) {
+        Document document = Document.create();
+        Class<? extends EsArticle> type = esArticle.getClass();
+        Field[] fields =  type.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object value = field.get(esArticle);
+                if (value != null) {
+                    document.put(field.getName(), value);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        UpdateQuery updateQuery = UpdateQuery.builder(Long.toString(esArticle.getId()))
+                //不加默认false。true表示更新时不存在就插入
+                .withDocAsUpsert(false)
+                .withDocument(document)
+                .build();
+        try {
+            elasticsearchRestTemplate.update(updateQuery, IndexCoordinates.of("article_index"));
+        } catch (Exception e) {
+            if (!e.getMessage().contains("200 OK") && !e.getMessage().contains("Unable to parse response body for Response")) {
+                throw new MyException(e.getMessage());
+            }
+        }
+        return true;
     }
 }

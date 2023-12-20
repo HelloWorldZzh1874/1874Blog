@@ -8,6 +8,7 @@ import com.zzh.common.exception.WebSocketException;
 import com.zzh.common.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -88,7 +89,7 @@ public class GlobalExceptionHandler extends JsonUtil {
     }
 
     /**
-     * @description WebSocket异常
+     * @description 自定义异常统一处理
      * @date 2022/4/25
      * @param req
      * @param resp
@@ -104,5 +105,28 @@ public class GlobalExceptionHandler extends JsonUtil {
         }
         this.writeJson(resp,Result.error(e.getErrorCode(),e.getErrorMsg()));
     }
+
+
+    /**
+     * @description 校验异常
+     * @date 2022/4/25
+     * @param req
+     * @param resp
+     * @param e
+     * @return void
+     */
+    @ExceptionHandler(value = BindException.class)
+    @ResponseBody
+    public void bindExceptionHandler(HttpServletRequest req, HttpServletResponse resp, BindException e) throws IOException {
+        logger.error(e.getMessage());
+        String defaultMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+            logger.error(stackTraceElement.toString());
+        }
+        this.writeJson(resp,Result.error(HttpStatus.BAD_REQUEST,defaultMessage));
+    }
+
+
+
 
 }

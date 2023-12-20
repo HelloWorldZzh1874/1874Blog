@@ -13,21 +13,18 @@ import com.zzh.common.utils.OssUtil;
 import com.zzh.common.utils.RedisUtils;
 import com.zzh.dto.*;
 import com.zzh.entity.*;
-import com.zzh.mapper.*;
+import com.zzh.mapper.ArticleMapper;
+import com.zzh.mapper.CategoryMapper;
+import com.zzh.mapper.ConArticleTagMapper;
+import com.zzh.mapper.TagMapper;
 import com.zzh.service.ArticleService;
 import com.zzh.service.ConArticleTagService;
-import com.zzh.service.ElasticService;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.vo.ArticleVO;
 import com.zzh.vo.ConditionVO;
 import com.zzh.vo.DeleteVO;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +34,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.zzh.common.constant.CommonConst.FALSE;
-import static com.zzh.common.constant.CommonConst.TRUE;
 import static com.zzh.common.constant.RedisConstant.*;
 
 /**
@@ -125,7 +121,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             conArticleTagMapper.delete(new LambdaQueryWrapper<ConArticleTag>().eq(ConArticleTag::getArticleId, articleVO.getId()));
         }
         // 添加文章标签
-        if (!articleVO.getTagIdList().isEmpty()) {
+        if (articleVO.getTagIdList() != null && !articleVO.getTagIdList().isEmpty()) {
             List<ConArticleTag> articleTagList = articleVO.getTagIdList().stream().map(tagId -> ConArticleTag.builder()
                             .articleId(article.getId())
                             .tagId(tagId)
@@ -133,17 +129,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                     .collect(Collectors.toList());
             conArticleTagService.saveBatch(articleTagList);
         }
-        if (!article.getIsDraft().equals(TRUE)) {
-            // 将文章添加到搜索库
-            EsArticle esArticle = EsArticle.builder()
-                    .id(article.getId())
-                    .articleContent(articleVO.getArticleContent())
-                    .articleTitle(articleVO.getArticleTitle())
-                    .isDraft(articleVO.getIsDraft())
-                    .build();
-            // 存储信息
-            esArticleService.saveEntity(esArticle);
-        }
+        // 将文章添加到搜索库
+        EsArticle esArticle = EsArticle.builder()
+                .id(article.getId())
+                .articleContent(articleVO.getArticleContent())
+                .articleTitle(articleVO.getArticleTitle())
+                .isDraft(articleVO.getIsDraft())
+                .isLogicDel(0)
+                .build();
+        // 存储信息
+        esArticleService.saveEntity(esArticle);
+
     }
 
     @Override
@@ -152,7 +148,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Article article = articleMapper.selectOne(new LambdaQueryWrapper<Article>()
                 .select(Article::getId, Article::getArticleTitle, Article::getArticleContent, Article::getArticleCover, Article::getCategoryId, Article::getIsTop, Article::getIsDraft)
                 .eq(Article::getId, articleId));
-        if(Objects.isNull(article)){
+        if (Objects.isNull(article)) {
             throw new NoDateException();
         }
         // 查询文章标签
@@ -188,16 +184,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteOrRecArticle(DeleteVO deleteVo) {
         // 修改文章逻辑删除状态
         // 根据条件生成要操作的对象，批量操作使用list
         List<Article> articleList = deleteVo.getIdList().stream().map(id -> Article.builder()
                         .id(id)
-                        .isTop(FALSE)
                         .isDelete(deleteVo.getIsDelete())
                         .build())
                 .collect(Collectors.toList());
-        this.updateBatchById(articleList);
+        updateBatchById(articleList);
+
+        articleList.forEach(item -> {
+            esArticleService.update(EsArticle.builder().id(item.getId()).isLogicDel(item.getIsDelete()).build());
+        });
+
+
     }
 
     @Override
@@ -242,10 +244,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public ArticleDTO getArticleById(Integer articleId, HttpServletRequest request) {
+        // 查询id对应的文章
+        ArticleDTO article;
+        if ((article = articleMapper.getArticleById(articleId)) == null) {
+            throw new NoDateException();
+        }
         // 更新浏览量
         asyncManager.updateArticleViewsCount(articleId, request);
-        // 查询id对应的文章
-        ArticleDTO article = articleMapper.getArticleById(articleId);
         // 查询上一篇下一篇文章
         Article lastArticle = articleMapper.selectOne(new LambdaQueryWrapper<Article>()
                 .select(Article::getId, Article::getArticleTitle, Article::getArticleCover)
@@ -287,6 +292,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public void saveArticleLike(Integer articleId) {
+        if (articleMapper.getArticleById(articleId) == null) {
+            throw new NoDateException();
+        }
         LoginUser loginUser = SecurityUtils.getCurUser();
         //查询当前用户点赞过的文章id集合
         Set<Integer> articleLikeSet = (Set<Integer>) redisTemplate.boundHashOps(ARTICLE_USER_LIKE).get(loginUser.getUser().getId().toString());
@@ -317,17 +325,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 搜索条件对应数据
         List<ArticlePreviewDTO> articlePreviewDTOList = articleMapper.listArticlesByCondition(conditionVO);
         // 搜索条件对应名(标签或分类名)
-        String name;
+        String name = null;
         if (Objects.nonNull(conditionVO.getCategoryId())) {
-            name = categoryMapper.selectOne(new LambdaQueryWrapper<Category>()
-                            .select(Category::getCategoryName)
-                            .eq(Category::getId, conditionVO.getCategoryId()))
-                    .getCategoryName();
+            Category category = categoryMapper.selectOne(new LambdaQueryWrapper<Category>()
+                    .select(Category::getCategoryName)
+                    .eq(Category::getId, conditionVO.getCategoryId()));
+            if (!Objects.isNull(category)) {
+                name = category.getCategoryName();
+            }
         } else {
-            name = tagMapper.selectOne(new LambdaQueryWrapper<Tag>()
-                            .select(Tag::getTagName)
-                            .eq(Tag::getId, conditionVO.getTagId()))
-                    .getTagName();
+            Tag tag = tagMapper.selectOne(new LambdaQueryWrapper<Tag>()
+                    .select(Tag::getTagName)
+                    .eq(Tag::getId, conditionVO.getTagId()));
+            if (!Objects.isNull(tag)) {
+                name = tag.getTagName();
+            }
+
         }
         return ArticlePreviewListDTO.builder()
                 .articlePreviewDTOList(articlePreviewDTOList)
@@ -335,72 +348,4 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .build();
     }
 
-    @Override
-    public List<EsArticle> listSearchArticles(ConditionVO conditionVO) {
-          /*
-        buildQuery()根据条件构造搜索语句
-         */
-        /*
-        searchArticle()真正的搜素逻辑
-         */
-        return searchArticle(buildQuery(conditionVO));
-    }
-
-    /**
-     * 搜索文章构造
-     *
-     * @param condition 条件
-     * @return es条件构造器
-     */
-    private NativeSearchQueryBuilder buildQuery(ConditionVO condition) {
-        // 条件构造器
-        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        // 根据关键词搜索文章标题或内容
-        if (Objects.nonNull(condition.getKeywords())) {
-            boolQueryBuilder.must(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("articleTitle", condition.getKeywords()))
-                            .should(QueryBuilders.matchQuery("articleContent", condition.getKeywords())))
-                    .must(QueryBuilders.termQuery("isDraft", FALSE));
-        }
-        // 查询
-        nativeSearchQueryBuilder.withQuery(boolQueryBuilder);
-        return nativeSearchQueryBuilder;
-    }
-
-    /**
-     * 文章搜索结果
-     *
-     * @param nativeSearchQueryBuilder es条件构造器
-     * @return 搜索结果
-     */
-    private List<EsArticle> searchArticle(NativeSearchQueryBuilder nativeSearchQueryBuilder) {
-        // 添加文章标题高亮
-        HighlightBuilder.Field titleField = new HighlightBuilder.Field("articleTitle");
-        titleField.preTags("<span style='color:#f47466'>");
-        titleField.postTags("</span>");
-        // 添加文章内容高亮
-        HighlightBuilder.Field contentField = new HighlightBuilder.Field("articleContent");
-        contentField.preTags("<span style='color:#f47466'>");
-        contentField.postTags("</span>");
-        contentField.fragmentSize(200);
-        nativeSearchQueryBuilder.withHighlightFields(titleField, contentField);
-        // 搜索
-        SearchHits<EsArticle> search = elasticsearchRestTemplate.search(nativeSearchQueryBuilder.build(), EsArticle.class);
-        return search.getSearchHits().stream().map(hit -> {
-            EsArticle article = hit.getContent();
-            // 获取文章标题高亮数据
-            List<String> titleHighLightList = hit.getHighlightFields().get("articleTitle");
-            if (CollectionUtils.isNotEmpty(titleHighLightList)) {
-                // 替换标题数据
-                article.setArticleTitle(titleHighLightList.get(0));
-            }
-            // 获取文章内容高亮数据
-            List<String> contentHighLightList = hit.getHighlightFields().get("articleContent");
-            if (CollectionUtils.isNotEmpty(contentHighLightList)) {
-                // 替换内容数据
-                article.setArticleContent(contentHighLightList.get(0));
-            }
-            return article;
-        }).collect(Collectors.toList());
-    }
 }

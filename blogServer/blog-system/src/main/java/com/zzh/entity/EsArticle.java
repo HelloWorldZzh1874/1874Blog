@@ -1,6 +1,7 @@
 package com.zzh.entity;
 
 import com.zzh.common.base.EsEntity;
+import io.swagger.models.auth.In;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -32,4 +33,7 @@ public class EsArticle extends EsEntity {
 
     @Field(type = FieldType.Integer)
     private Integer isDraft;
+
+    @Field(type = FieldType.Integer)
+    private Integer isLogicDel;
 }

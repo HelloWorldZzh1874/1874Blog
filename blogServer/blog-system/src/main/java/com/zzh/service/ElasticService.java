@@ -51,4 +51,6 @@ public interface ElasticService<T extends EsEntity>{
      * 將數據庫的文章數據同步到es中
      */
     void initArticleData();
+
+    boolean update(T t);
 }

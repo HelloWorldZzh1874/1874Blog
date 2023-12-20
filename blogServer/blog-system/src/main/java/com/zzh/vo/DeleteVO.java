@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
 
@@ -32,5 +33,6 @@ public class DeleteVO {
      * 状态值
      */
     @ApiModelProperty(name = "isDelete", value = "删除状态", required = true, dataType = "Integer")
+    @Range(max = 1,min = 0,message = "删除状态为0或1")
     private Integer isDelete;
 }
