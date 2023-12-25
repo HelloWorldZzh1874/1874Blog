@@ -68,7 +68,7 @@
             drag
             :headers="token"
             :before-upload="beforeAvatarUplode"
-            action="http://81.68.122.101:8088/article/uploadCover"
+            action="http://127.0.0.1:8088/article/uploadCover"
             multiple
             :on-remove="deleteCover"
             :on-success="uploadCover"

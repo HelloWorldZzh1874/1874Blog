@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     collapse: false,
-    HOST: "http://81.68.122.101:8088",
+    HOST: "http://127.0.0.1:8088",
     tabList: [{ name: "首页", path: "/" }],
     username: null,
     avatar: null,

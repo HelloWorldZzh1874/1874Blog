@@ -97,7 +97,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 10px"
-            @onConfirm="deleteRoles(scope.row.id)"
+            @confirm="deleteRoles(scope.row.id)"
           >
             <el-button size="mini" type="text" slot="reference">
               <i class="el-icon-delete" /> 删除
@@ -267,6 +267,7 @@ export default {
     },
     // 删除角色
     deleteRoles(id) {
+      console.log(id);
       let param = {};
       if (id == null) {
         param = { data: this.roleIdList };

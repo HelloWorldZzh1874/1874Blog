@@ -175,7 +175,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 10px"
-            @onConfirm="updateArticleStatus(scope.row.id)"
+            @confirm="updateArticleStatus(scope.row.id)"
             v-if="scope.row.isDelete == 0"
           >
             <el-button size="mini" type="danger" slot="reference">
@@ -185,7 +185,7 @@
           <el-popconfirm
             title="确定恢复吗？"
             v-if="scope.row.isDelete == 1"
-            @onConfirm="updateArticleStatus(scope.row.id)"
+            @confirm="updateArticleStatus(scope.row.id)"
           >
             <el-button size="mini" type="success" slot="reference">
               恢复
@@ -195,7 +195,7 @@
             style="margin-left: 10px"
             v-if="scope.row.isDelete == 1"
             title="确定彻底删除吗？"
-            @onConfirm="deleteArticles(scope.row.id)"
+            @confirm="deleteArticles(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除

@@ -18,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-import java.util.Objects;
-
 import static com.zzh.aop.OptTypeConst.REMOVE;
 import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 
@@ -90,7 +88,7 @@ public class SingerController extends BaseController {
     @OptLog(optType = REMOVE)
     @DeleteMapping("/admin/delete")
     public Result deleteSinger(@RequestParam Integer id) {
-        if(Objects.nonNull( musicService.getOne(new LambdaQueryWrapper<Music>().eq(Music::getSingerId,id)))){
+        if(!musicService.list(new LambdaQueryWrapper<Music>().eq(Music::getSingerId, id)).isEmpty()){
             return Result.error("该歌手下还有歌曲！删除失败");
         }
         singerService.deleteSinger(id);

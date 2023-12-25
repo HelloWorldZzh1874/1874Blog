@@ -120,7 +120,7 @@
           <el-popconfirm
             style="margin-left: 10px"
             title="确定彻底删除吗？"
-            @onConfirm="deleteComments(scope.row.id)"
+            @confirm="deleteComments(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除

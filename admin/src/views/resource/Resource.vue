@@ -80,7 +80,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 10px"
-            @onConfirm="deleteResource(scope.row.id)"
+            @confirm="deleteResource(scope.row.id)"
           >
             <el-button size="mini" type="text" slot="reference">
               <i class="el-icon-delete" /> 删除

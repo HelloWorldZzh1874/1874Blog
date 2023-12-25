@@ -146,23 +146,23 @@ export const deleteLinks = param =>
 ``
 /* ===============================> 日志api <====================================== */
 // 日志查询
-export const listBackLogs = param => post(`/admin/logs`, param);
+export const listBackLogs = param => post(`/OperationLog/admin/logs`, param);
 // 日志删除
 export const deleteLogs = param => deletefn(`/OperationLog/admin/logs`, param);
 
 /* ===============================> 关于api <====================================== */
 // 查询redis中关于我的信息
-export const getAbout = () => get(`/about`);
+export const getAbout = () => get(`/blogInfo/about`);
 // 修改关于我的消息
-export const updateAbout = param => put(`/admin/about`, param);
+export const updateAbout = param => put(`/blogInfo/admin/about`, param);
 
 /* ===============================> 公告api <====================================== */
 // 获取公告
-export const getNotice = () => get(`/admin/notice`);
+export const getNotice = () => get(`/blogInfo/admin/notice`);
 // 修改公告
-export const updateNotice = param => put(`/admin/notice`, param);
+export const updateNotice = param => put(`/blogInfo/admin/notice`, param);
 // 获取首页博客数据
-export const getBackBlogInfo = () => get(`/admin/index`);
+export const getBackBlogInfo = () => get(`/blogInfo/admin/index`);
 
 /* ===============================> 歌曲api <====================================== */
 // 查询所有音乐数据

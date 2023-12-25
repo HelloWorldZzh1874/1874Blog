@@ -87,7 +87,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 1rem"
-            @onConfirm="deleteLink(scope.row.id)"
+            @confirm="deleteLink(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除

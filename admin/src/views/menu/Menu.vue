@@ -84,7 +84,7 @@
           <el-popconfirm
             title="确定删除吗？如果时一级目录这样会删除所有子菜单!"
             style="margin-left: 10px"
-            @onConfirm="deleteLink(scope.row.id)"
+            @confirm="deleteLink(scope.row.id)"
           >
             <el-button size="mini" type="text" slot="reference">
               <i class="el-icon-delete" /> 删除

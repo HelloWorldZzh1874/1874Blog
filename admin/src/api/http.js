@@ -9,7 +9,7 @@ axios.defaults.timeout = 30000; // 超时时间30秒
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded;charset=UTF-8";
 // 基础后台url
-axios.defaults.baseURL = "http://81.68.122.101:8088";
+axios.defaults.baseURL = "http://127.0.0.1:8088";
 axios.interceptors.response.use(
   response => {
     // 响应包含403访问未授权资源，如果登录则退出登录

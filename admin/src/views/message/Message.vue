@@ -82,7 +82,7 @@
         <template slot-scope="scope">
           <el-popconfirm
             title="确定删除吗？"
-            @onConfirm="deleteMessage(scope.row.id)"
+            @confirm="deleteMessage(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除
