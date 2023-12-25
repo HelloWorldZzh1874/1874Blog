@@ -32,7 +32,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class TagController extends BaseController {
 
     @Autowired
-    TagService tagService;
+    private TagService tagService;
 
     /**
      * @param conditionVO 分页查询信息

@@ -33,7 +33,7 @@ import static com.zzh.aop.OptTypeConst.SAVE;
 public class UserInfoController extends BaseController {
 
     @Autowired
-    UserInfoService userInfoService;
+    private UserInfoService userInfoService;
 
     /**
      * 修改用户角色

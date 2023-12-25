@@ -4,6 +4,7 @@ package com.zzh.controller;
 import com.zzh.aop.OptLog;
 import com.zzh.common.base.BaseController;
 import com.zzh.common.base.Result;
+import com.zzh.common.constant.HttpStatus;
 import com.zzh.service.CommentService;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.vo.CommentVO;
@@ -79,7 +80,6 @@ public class CommentController extends BaseController {
      * @description 文章查询评论，并返回评论与子评论集合
      * @date 2022/4/17
      * @param articleId 文章id
-     * @param current
      * @return com.zzh.common.base.Result
      */
     @ApiOperation(value = "查询评论")
@@ -122,6 +122,9 @@ public class CommentController extends BaseController {
     @ApiOperation(value = "查询回复")
     @GetMapping("/replies/{commentId}")
     public Result listRepliesByCommentId(@PathVariable("commentId") Integer commentId, Long current) {
+        if(current==null || current<=0){
+            return Result.error(HttpStatus.BAD_METHOD,"参数异常！");
+        }
         return Result.success(commentService.listRepliesByCommentId(commentId,current));
     }
 
@@ -132,8 +135,9 @@ public class CommentController extends BaseController {
      */
     @ApiOperation(value = "改变回复已读状态")
     @PutMapping("/readComment/{commentId}")
-    public void changeRead(@PathVariable("commentId") Long commentId){
+    public Result changeRead(@PathVariable("commentId") Long commentId){
         commentService.changeRead(commentId);
+        return Result.success();
     }
 
     /**

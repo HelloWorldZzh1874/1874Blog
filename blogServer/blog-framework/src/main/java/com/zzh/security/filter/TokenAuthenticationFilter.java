@@ -47,7 +47,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // 测试环境用
         if (StringUtils.isNotEmpty(token) && "root".equals(token)) {
             LoginUser testUser = LoginUser.builder().role("ROLE_ROOT")
-                    .user(User.builder().id(1L).username("test").password("123").enabled(true).notLock(true).build()).build();
+                    .user(User.builder().id(15L).username("test").password("123").enabled(true).notLock(true).build()).build();
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(testUser, null, testUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

@@ -32,7 +32,7 @@ import static com.zzh.common.constant.CommonConst.MUSIC_COVER;
 public class MusicController extends BaseController {
 
     @Autowired
-    MusicService musicService;
+    private MusicService musicService;
 
     /**
      * @description 根据歌手id查找歌曲

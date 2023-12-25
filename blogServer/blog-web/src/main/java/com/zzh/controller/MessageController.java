@@ -36,10 +36,10 @@ import static com.zzh.aop.OptTypeConst.REMOVE;
 public class MessageController extends BaseController {
 
     @Autowired
-    MessageService messageService;
+    private MessageService messageService;
 
     @Autowired
-    WebSocketController webSocketController;
+    private WebSocketController webSocketController;
 
     /**
      * @description 查询后台留言

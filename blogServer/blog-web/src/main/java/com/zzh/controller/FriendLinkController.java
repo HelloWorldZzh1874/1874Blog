@@ -33,7 +33,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class FriendLinkController extends BaseController {
 
     @Autowired
-    FriendLinkService friendLinkService;
+    private FriendLinkService friendLinkService;
 
     /**
      * @description 查看后台友链

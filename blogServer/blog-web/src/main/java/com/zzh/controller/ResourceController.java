@@ -30,7 +30,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class ResourceController extends BaseController {
 
     @Autowired
-    ResourceService resourceService;
+    private ResourceService resourceService;
 
     /**
      * @description 查看角色资源选项

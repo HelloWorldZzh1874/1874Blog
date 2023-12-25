@@ -34,7 +34,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class RoleController extends BaseController {
 
     @Autowired
-    RoleService roleService;
+    private RoleService roleService;
 
     /**
      * @description 获取角色信息

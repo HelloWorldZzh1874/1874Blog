@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zzh.aysnc.AsyncManager;
+import com.zzh.common.exception.NoDateException;
 import com.zzh.common.exception.baseException.CommonWriteException;
 import com.zzh.common.utils.HTMLUtil;
 import com.zzh.common.utils.RedisUtils;
@@ -19,7 +20,6 @@ import com.zzh.service.UserService;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.vo.CommentVO;
 import com.zzh.vo.ConditionVO;
-import com.zzh.vo.DeleteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -46,24 +46,25 @@ import static com.zzh.common.constant.RedisConstant.COMMENT_USER_LIKE;
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
     @Autowired
-    CommentMapper commentMapper;
+    private CommentMapper commentMapper;
 
     @Autowired
-    RedisUtils redisUtils;
-    @Autowired
-    RedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
     @Autowired
-    AsyncManager asyncManager;
+    private RedisTemplate redisTemplate;
 
     @Autowired
-    UserInfoService userInfoService;
+    private AsyncManager asyncManager;
 
     @Autowired
-    UserService userService;
+    private UserInfoService userInfoService;
 
     @Autowired
-    ArticleService articleService;
+    private UserService userService;
+
+    @Autowired
+    private ArticleService articleService;
 
     @Override
     public PageInfo<CommentBackDTO> listBackComments(ConditionVO conditionVO) {
@@ -135,6 +136,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveCommentLike(Integer commentId) {
+        if(commentMapper.selectById(commentId) == null){
+            throw new NoDateException("评论数据出错！");
+        }
         // 查询当前用户点赞过的评论id集合
         HashSet<Integer> commentLikeSet = (HashSet<Integer>) redisTemplate.boundHashOps(COMMENT_USER_LIKE).get(SecurityUtils.getCurUser().getUser().getId().toString());
         // 第一次点赞则创建

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "服务器信息")
 public class SystemInfoController {
     @Autowired
-    SystemInfoService systemInfoService;
+    private SystemInfoService systemInfoService;
 
     /**
      * @description 获取服务器信息

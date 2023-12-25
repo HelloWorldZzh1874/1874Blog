@@ -25,10 +25,10 @@ import static com.zzh.aop.OptTypeConst.*;
 public class QuartzController {
 
     @Autowired
-    QuartzService quartzService;
+    private QuartzService quartzService;
 
     @Autowired
-    SysQuartzService sysQuartzService;
+    private SysQuartzService sysQuartzService;
 
     /**
      * @param sysQuartzVo 前端数据

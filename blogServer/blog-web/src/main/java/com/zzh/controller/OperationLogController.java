@@ -23,7 +23,7 @@ import static com.zzh.aop.OptTypeConst.REMOVE;
 @RequestMapping("/OperationLog")
 public class OperationLogController {
     @Autowired
-    OperationLogService operationLogService;
+    private OperationLogService operationLogService;
 
     @ApiOperation(value = "查看操作日志")
     @PostMapping("/admin/logs")

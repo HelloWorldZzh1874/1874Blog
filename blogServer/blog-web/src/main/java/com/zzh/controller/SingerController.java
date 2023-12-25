@@ -37,10 +37,10 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class SingerController extends BaseController {
 
     @Autowired
-    SingerService singerService;
+    private SingerService singerService;
 
     @Autowired
-    MusicService musicService;
+    private MusicService musicService;
 
     /**
      * @description 查询歌手列表

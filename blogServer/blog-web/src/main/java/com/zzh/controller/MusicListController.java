@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MusicListController extends BaseController {
 
     @Autowired
-    MusicListService musicListService;
+    private MusicListService musicListService;
 
     /**
      * @return 返回歌曲列表歌曲信息

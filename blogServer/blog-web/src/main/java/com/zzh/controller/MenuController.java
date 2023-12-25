@@ -38,7 +38,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class MenuController extends BaseController {
 
     @Autowired
-    MenuService menuService;
+    private MenuService menuService;
 
     /**
      * @return com.zzh.common.base.Result

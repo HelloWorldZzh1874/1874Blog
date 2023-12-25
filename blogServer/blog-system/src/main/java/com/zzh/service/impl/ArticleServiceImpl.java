@@ -88,8 +88,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Map<String, Integer> likeCountMap = redisUtils.getMapValue(ARTICLE_LIKE_COUNT);
         // 分组各文章的点赞量和浏览量
         articleBackDTOList.forEach(item -> {
-            item.setViewsCount(Objects.requireNonNull(viewsCountMap).get(item.getId().toString()));
-            item.setLikeCount(Objects.requireNonNull(likeCountMap).get(item.getId().toString()));
+            int viewsCount = viewsCountMap.getOrDefault(item.getId().toString(), 0);
+            int likeCount = likeCountMap.getOrDefault(item.getId().toString(), 0);
+            item.setViewsCount(viewsCount);
+            item.setLikeCount(likeCount);
         });
         PageInfo<ArticleBackDTO> pageInfo = new PageInfo<>(articleBackDTOList);
         pageInfo.setTotal(articleMapper.countArticles(conditionVO));
