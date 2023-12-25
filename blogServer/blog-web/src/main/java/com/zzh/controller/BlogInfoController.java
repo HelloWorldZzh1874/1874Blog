@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.zzh.aop.OptTypeConst.UPDATE;
@@ -18,6 +19,7 @@ import static com.zzh.aop.OptTypeConst.UPDATE;
  * @date 2022/3/31 11:04
  */
 @RestController
+@RequestMapping("/blogInfo")
 @Api(tags = "博客信息模块")
 public class BlogInfoController {
 
@@ -56,7 +58,7 @@ public class BlogInfoController {
      * @return com.zzh.common.base.Result
      */
     @ApiOperation(value = "获得公告")
-    @GetMapping("/admin/notice")
+    @GetMapping("/notice")
     public Result getNotice() {
         Result result = Result.success();
         result.setData(blogService.getNotice());

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zzh.common.constant.HttpStatus;
+import com.zzh.common.exception.NoDateException;
 import com.zzh.common.exception.baseException.CommonWriteException;
 import com.zzh.common.exception.baseException.MyException;
 import com.zzh.dto.CatalogDTO;
@@ -56,7 +57,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 .in(Article::getCategoryId, categoryIdList));
         if (count > 0) {
             // 如果该分类下有文章，则不删除
-            throw new CommonWriteException("删除失败！该分类下有文章!请先删除相关文章");
+            throw new NoDateException("删除失败！该分类下有文章!请先删除相关文章");
         }
         categoryMapper.deleteBatchIds(categoryIdList);
     }

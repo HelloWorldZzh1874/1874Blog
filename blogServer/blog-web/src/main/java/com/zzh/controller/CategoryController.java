@@ -34,7 +34,7 @@ import static com.zzh.aop.OptTypeConst.SAVE_OR_UPDATE;
 public class CategoryController extends BaseController {
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     /**
      * @description 查询分类信息

@@ -8,7 +8,6 @@ import com.zzh.service.CommentService;
 import com.zzh.utils.SecurityUtils;
 import com.zzh.vo.CommentVO;
 import com.zzh.vo.ConditionVO;
-import com.zzh.vo.DeleteVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.zzh.aop.OptTypeConst.REMOVE;
-import static com.zzh.aop.OptTypeConst.UPDATE;
 
 /**
  * <p>
@@ -34,7 +32,7 @@ import static com.zzh.aop.OptTypeConst.UPDATE;
 public class CommentController extends BaseController {
 
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
 
     /**
      * @description 查询后台评论列表
