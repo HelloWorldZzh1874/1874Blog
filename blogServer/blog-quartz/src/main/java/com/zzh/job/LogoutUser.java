@@ -7,7 +7,6 @@ import com.zzh.common.utils.SpringContextUtil;
 import com.zzh.job.base.BaseJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +25,7 @@ public class LogoutUser implements BaseJob {
     private final OnlineUserMap onlineUserMap = SpringContextUtil.getBean(OnlineUserMap.class);
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
         onlineUserMap.forEach((key,value)->{
             if(DateUtil.compare(DateUtil.date(),value.getLogoutDate())>=0){
                 onlineUserMap.remove(key);

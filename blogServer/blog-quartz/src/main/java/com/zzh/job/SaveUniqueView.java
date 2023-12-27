@@ -9,12 +9,8 @@ import com.zzh.job.base.BaseJob;
 import com.zzh.mapper.UniqueViewMapper;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 import static com.zzh.common.constant.RedisConstant.IP_SET;
 
@@ -33,13 +29,13 @@ public class SaveUniqueView implements BaseJob {
     private final UniqueViewMapper uniqueViewMapper = SpringContextUtil.getBean(UniqueViewMapper.class);
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
         // 获取每天用户量
-        Long count = (long) redisUtils.getMembers(IP_SET).size();
+        long count = redisUtils.getMembers(IP_SET).size();
         // 获取昨天日期插入数据
         UniqueView uniqueView = UniqueView.builder()
                 .createTime(DateUtil.yesterday())
-                .viewsCount(Objects.nonNull(count) ? count.intValue() : 0).build();
+                .viewsCount((int) count).build();
         uniqueViewMapper.insert(uniqueView);
     }
 }

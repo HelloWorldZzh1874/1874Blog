@@ -38,6 +38,7 @@
         <reflections>0.10.2</reflections>
         <google.guava>21.0</google.guava>
         <es.version>4.3.4</es.version>
+        <ssh.version>262</ssh.version>
     </properties>
 
     <dependencyManagement>
@@ -212,13 +213,19 @@
                 <version>${google.guava}</version>
             </dependency>
 
+
             <!-- 腾讯oos工具类 -->
             <dependency>
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos_api</artifactId>
                 <version>${oos.version}</version>
             </dependency>
-
+            <!-- ssh连接执行Shell-->
+            <dependency>
+                <groupId>ch.ethz.ganymed</groupId>
+                <artifactId>ganymed-ssh2</artifactId>
+                <version>${ssh.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.zzh</groupId>
                 <artifactId>blog-framework</artifactId>

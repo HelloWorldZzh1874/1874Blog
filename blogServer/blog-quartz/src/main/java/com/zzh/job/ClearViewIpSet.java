@@ -6,7 +6,6 @@ import com.zzh.common.utils.SpringContextUtil;
 import com.zzh.job.base.BaseJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,7 @@ public class ClearViewIpSet implements BaseJob {
     private final RedisUtils redisUtils = SpringContextUtil.getBean(RedisUtils.class);
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
         //清空redis中的ip
         redisUtils.remove(IP_SET);
     }
