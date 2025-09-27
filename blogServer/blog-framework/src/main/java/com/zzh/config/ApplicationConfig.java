@@ -1,5 +1,7 @@
 package com.zzh.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Component;
  * @Description Swagger相关配置参数
  **/
 
+@Setter
+@Getter
 @Component
 @ConfigurationProperties(prefix = "blog")
 public class ApplicationConfig {
@@ -22,27 +26,4 @@ public class ApplicationConfig {
     /** 项目时间 */
     private String copyrightYear;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getCopyrightYear() {
-        return copyrightYear;
-    }
-
-    public void setCopyrightYear(String copyrightYear) {
-        this.copyrightYear = copyrightYear;
-    }
 }
