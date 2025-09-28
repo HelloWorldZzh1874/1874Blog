@@ -97,7 +97,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 10px"
-            @confirm="deleteRoles(scope.row.id)"
+            @onConfirm="deleteRoles(scope.row.id)"
           >
             <el-button size="mini" type="text" slot="reference">
               <i class="el-icon-delete" /> 删除

@@ -67,7 +67,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 1rem"
-            @confirm="deleteCategory(scope.row.id)"
+            @onConfirm="deleteCategory(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除

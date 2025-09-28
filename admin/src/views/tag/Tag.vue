@@ -73,7 +73,7 @@
           <el-popconfirm
             title="确定删除吗？"
             style="margin-left: 1rem"
-            @confirm="deleteTag(scope.row.id)"
+            @onConfirm="deleteTag(scope.row.id)"
           >
             <el-button size="mini" type="danger" slot="reference">
               删除
@@ -184,7 +184,7 @@ export default {
         } else {
           this.$notify.error({
             title: "失败",
-            message: res.message
+            message: res.msg
           });
         }
       });

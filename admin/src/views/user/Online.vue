@@ -57,7 +57,7 @@
           <el-popconfirm
             title="确定下线吗？"
             style="margin-left: 10px"
-            @confirm="removeOnlineUser(scope.row.id)"
+            @onConfirm="removeOnlineUser(scope.row.id)"
           >
             <el-button size="mini" type="text" slot="reference">
               <i class="el-icon-delete" /> 强制下线
